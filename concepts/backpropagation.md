@@ -1,15 +1,12 @@
 ---
 title: "Backpropagation"
 tags: [Fundamentals, Training]
-difficulty: beginner
-date: 2026-04-06
-image_source: "3Blue1Brown — https://www.3blue1brown.com/lessons/backpropagation"
-image_path: "assets/backprop.png"
 ---
 
 # Backpropagation
 
-> One-sentence intuition: Backpropagation is a "blame-assignment" algorithm that calculates exactly how much each weight and bias in a neural network contributed to an error, allowing the network to learn from its mistakes.
+> [!TIP]
+> Backpropagation is a "blame-assignment" algorithm that calculates exactly how much each weight and bias in a neural network contributed to an error, allowing the network to learn from its mistakes.
 
 ## The Core Idea
 When training a neural network, the process is essentially an optimization problem where we want to find the best configuration of parameters to make accurate predictions. After a network makes a prediction (the forward pass), we calculate the error relative to the true answer using a loss function. But how do we know which internal connections to adjust and by how much?
@@ -48,9 +45,11 @@ error_signal_prev = torch.matmul(d_layer, weights.T)
 
 ## Interview Angle
 Backpropagation is practically guaranteed to come up in introductory ML interviews.
+
 **What gets asked:** "Can you derive backpropagation for a simple fully connected layer or a specific activation function (like ReLU or Sigmoid)?" 
+
 **What trips people up:** The difference between backpropagation and gradient descent. Backpropagation *only* computes the gradients (the direction to move); it's gradient descent (or Adam, SGD, etc.) that actually updates the weights. Another common pitfall is misunderstanding the vanishing/exploding gradient problem.
+
 **A great answer:** An excellent candidate can intuitively explain the chain rule component, relate it to computation graphs, and smoothly transition into how different activation functions (like ReLU vs. Sigmoid) affect the gradients during the backward pass.
 
 ---
-*Image credit: [3Blue1Brown](https://www.3blue1brown.com/lessons/backpropagation)*

@@ -1,22 +1,19 @@
 ---
 title: "{Concept Name}"
-tags: [Fundamentals | Architectures | Interviews | Latest Developments]
-difficulty: beginner | intermediate | advanced
-date: YYYY-MM-DD
-image_source: "{Source Name} — {URL}"
-image_path: "assets/{slug}.png"
+tags: [Fundamentals | Architectures | Training | Inference]
 ---
 
 # {Concept Name}
 
+> [!TIP]
 > One-sentence intuition. What is this, in plain English?
 
 ## The Core Idea
 
+{150-250 words. Lead with intuition. Reference the diagram/formula above. Let the visual do the heavy lifting — your words should explain what the reader is seeing, not repeat it.}
+
 ![{Descriptive alt text}](../assets/{slug}.png)
 *Source: [{Source Name}]({URL})*
-
-{150-250 words. Lead with intuition. Reference the diagram/formula above. Let the visual do the heavy lifting — your words should explain what the reader is seeing, not repeat it.}
 
 ## How It Works
 
@@ -31,4 +28,3 @@ image_path: "assets/{slug}.png"
 **A great answer:** {What distinguishes a strong candidate's response.}
 
 ---
-*Image credit: [{Source Name}]({URL})*
