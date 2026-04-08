@@ -1,8 +1,3 @@
----
-title: "Transformer"
-tags: [Architectures]
----
-
 # Transformer
 
 > [!TIP]

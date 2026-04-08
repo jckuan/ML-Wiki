@@ -1,8 +1,3 @@
----
-title: "Backpropagation"
-tags: [Fundamentals, Training]
----
-
 # Backpropagation
 
 > [!TIP]
