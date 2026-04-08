@@ -30,5 +30,3 @@ $$
 **What trips people up:** {The common misconceptions or gaps candidates show.}
 
 **A great answer:** {What distinguishes a strong candidate's response.}
-
----

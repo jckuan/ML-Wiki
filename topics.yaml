@@ -8,60 +8,50 @@ queue:
   - slug: attention
     title: "Attention"
     tags: [Fundamentals, Architectures]
-    difficulty: intermediate
     status: published
 
   - slug: backpropagation
     title: "Backpropagation"
     tags: [Fundamentals, Training]
-    difficulty: beginner
     status: published
 
   - slug: transformer
     title: "Transformer"
     tags: [Architectures]
-    difficulty: advanced
     status: published
 
   # --- Queued (upcoming) ---
   - slug: batch-normalization
     title: "Batch Normalization"
     tags: [Training]
-    difficulty: beginner
     status: queued
 
   - slug: dropout
     title: "Dropout"
     tags: [Training]
-    difficulty: beginner
     status: queued
 
   - slug: convolutional-neural-network
     title: "Convolutional Neural Network"
     tags: [Architectures]
-    difficulty: intermediate
     status: queued
 
   - slug: recurrent-neural-network
     title: "Recurrent Neural Network"
     tags: [Architectures]
-    difficulty: intermediate
     status: queued
 
   - slug: cross-entropy-loss
     title: "Cross-Entropy Loss"
     tags: [Fundamentals, Training]
-    difficulty: beginner
     status: queued
 
   - slug: gradient-descent
     title: "Gradient Descent"
     tags: [Fundamentals, Training]
-    difficulty: beginner
     status: queued
 
   - slug: word2vec
     title: "Word2Vec"
     tags: [Architectures]
-    difficulty: intermediate
     status: queued
