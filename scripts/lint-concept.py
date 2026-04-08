@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Lint a concept markdown file against the ML-Wiki template rules.
 
-Usage: python3 scripts/lint-concept.py concepts/foo.md
+Usage: python3 scripts/lint-concept.py wiki/foo.md
 Exit code: 0 = pass, 1 = fail
 """
 

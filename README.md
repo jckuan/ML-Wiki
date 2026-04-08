@@ -6,8 +6,8 @@ A reference of ML concepts optimized for interview prep and quick review. Each c
 
 | Concept | Tags |
 |---------|------|
-| [Attention](concepts/attention.md) | `Fundamentals` `Architectures` |
-| [Backpropagation](concepts/backpropagation.md) | `Fundamentals` `Training` |
-| [Transformer](concepts/transformer.md) | `Architectures` |
+| [Attention](wiki/attention.md) | `Fundamentals` `Architectures` |
+| [Backpropagation](wiki/backpropagation.md) | `Fundamentals` `Training` |
+| [Transformer](wiki/transformer.md) | `Architectures` |
 
 <!-- CONCEPTS_TABLE_END -->

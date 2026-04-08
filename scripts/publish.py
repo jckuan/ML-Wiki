@@ -73,7 +73,7 @@ def build_table(entries):
         if e["status"] != "published":
             continue
         slug = e["slug"]
-        concept_path = os.path.join(REPO_ROOT, "concepts", f"{slug}.md")
+        concept_path = os.path.join(REPO_ROOT, "wiki", f"{slug}.md")
         # Read actual frontmatter from concept file (authoritative)
         if os.path.exists(concept_path):
             fm = parse_frontmatter(concept_path)
@@ -85,7 +85,7 @@ def build_table(entries):
 
         tags_list = tags if isinstance(tags, list) else [tags]
         tags_str = " ".join(f"`{t}`" for t in tags_list)
-        lines.append(f"| [{title}](concepts/{slug}.md) | {tags_str} |")
+        lines.append(f"| [{title}](wiki/{slug}.md) | {tags_str} |")
     return "\n".join(lines)
 
 
@@ -132,7 +132,7 @@ def main():
 
     slug = target["slug"]
     draft_path = os.path.join(REPO_ROOT, "drafts", f"{slug}.md")
-    concept_path = os.path.join(REPO_ROOT, "concepts", f"{slug}.md")
+    concept_path = os.path.join(REPO_ROOT, "wiki", f"{slug}.md")
 
     if not os.path.exists(draft_path):
         print(f"ERROR: draft not found: {draft_path}")
@@ -150,8 +150,8 @@ def main():
         print(f"ERROR: Lint failed for {draft_path}")
         return 1
 
-    # Copy draft → concepts/
-    os.makedirs(os.path.join(REPO_ROOT, "concepts"), exist_ok=True)
+    # Copy draft → wiki/
+    os.makedirs(os.path.join(REPO_ROOT, "wiki"), exist_ok=True)
     shutil.copy2(draft_path, concept_path)
     print(f"Copied: {draft_path} → {concept_path}")
 
