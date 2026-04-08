@@ -1,3 +1,13 @@
 # ML-Wiki
 
-- [1D convolution, 1 x 1 convolution](https://jordan-kuan.notion.site/1D-Convolution-1-x-1-Convolution-40cd1780b5ea47ff801e8f6aa1e551fe?pvs=4)
+A reference of ML concepts optimized for interview prep and quick review. Each concept is a focused explainer with an interview angle — not a course, not a link dump.
+
+<!-- CONCEPTS_TABLE_START -->
+
+| Concept | Tags |
+|---------|------|
+| [Attention](concepts/attention.md) | `Fundamentals` `Architectures` |
+| [Backpropagation](concepts/backpropagation.md) | `Fundamentals` `Training` |
+| [Transformer](concepts/transformer.md) | `Architectures` |
+
+<!-- CONCEPTS_TABLE_END -->

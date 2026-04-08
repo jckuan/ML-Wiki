@@ -1,6 +1,6 @@
 ---
 title: "Transformer"
-tags: [Architectures, Interviews]
+tags: [Architectures]
 difficulty: advanced
 date: 2026-04-06
 image_source: "Ashish Vaswani et al. — https://arxiv.org/abs/1706.03762"

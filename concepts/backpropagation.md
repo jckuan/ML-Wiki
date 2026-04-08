@@ -1,6 +1,6 @@
 ---
 title: "Backpropagation"
-tags: [Fundamentals, Interviews]
+tags: [Fundamentals, Training]
 difficulty: beginner
 date: 2026-04-06
 image_source: "3Blue1Brown — https://www.3blue1brown.com/lessons/backpropagation"

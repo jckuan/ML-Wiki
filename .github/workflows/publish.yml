@@ -1,0 +1,45 @@
+name: Publish Concept
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'   # weekly, Monday 9am UTC
+  workflow_dispatch:
+
+concurrency:
+  group: publish
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  publish-concept:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run publish script
+        id: publish
+        run: |
+          OUTPUT=$(python3 scripts/publish.py 2>&1)
+          echo "$OUTPUT"
+          SLUG=$(echo "$OUTPUT" | grep '^Published: ' | sed 's/^Published: //')
+          echo "slug=$SLUG" >> "$GITHUB_OUTPUT"
+
+      - name: Commit and push changes
+        if: steps.publish.outputs.slug != ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add concepts/ README.md topics.yaml
+          git diff --staged --quiet || git commit -m "chore: publish ${{ steps.publish.outputs.slug }} concept [skip ci]"
+          git push

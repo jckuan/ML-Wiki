@@ -109,10 +109,7 @@ PHASE 1 (GitHub Actions — scheduled weekly, cron: '0 9 * * 1')
         ├── Copy drafts/{slug}.md → concepts/{slug}.md
         ├── Update README.md index table
         ├── Mark status: published in topics.yaml
-        ├── Commit and push
-        └── Generate carousel PNGs via Puppeteer (slide-template.html)
-              → instagram/{slug}/slide-01.png ... slide-10.png
-              [Manual upload to Instagram until Graph API is set up]
+        └── Commit and push
 
 PHASE 2 (future — requires Meta app review)
 ────────────────────────────────────────
@@ -172,17 +169,10 @@ Steps:
 2. Find the lowest-index entry in `topics.yaml` with `status: ready`
 3. If no `ready` entry exists: exit 0 with log message "No topics ready to publish."
 4. Copy `drafts/{slug}.md` → `concepts/{slug}.md`
-5. Append row to README.md index table. The index table lives at end-of-file,
-   allowing simple line append. Sentinel comment `<!-- CONCEPTS_TABLE_END -->` marks
-   the insertion point for the append script.
-6. Run Puppeteer slide renderer: `npx puppeteer@latest` against `instagram/slide-template.html`
-   (requires `actions/setup-node@v4` + `npx puppeteer browsers install chrome` — adds ~2-3 min CI)
-   Output: `instagram/{slug}/slide-01.png` ... `slide-10.png`
-   Cache `~/.cache/puppeteer` between runs to avoid repeat chrome downloads.
-7. Set `status: published` in `topics.yaml`
-8. Commit and push.
-   If any step 4-7 fails: exit non-zero without committing (prevents partial state).
-   Exception: if step 6 (Puppeteer) fails, commit concept file but skip PNGs, log warning.
+5. Update README.md index table using the `<!-- CONCEPTS_TABLE_START/END -->` sentinels.
+6. Set `status: published` in `topics.yaml`
+7. Commit and push.
+   If any step 4-6 fails: exit non-zero without committing (prevents partial state).
 
 **Permissions required in workflow YAML:**
 ```yaml
@@ -205,30 +195,8 @@ Each concept markdown generates 10 slides:
 - Slide 10: CTA — "Full explainer + more concepts: [GitHub link in bio]"
 
 Rendering:
-- **Tool**: Puppeteer renders `instagram/slide-template.html` → 1080x1080px PNG
-- **Slide template**: `instagram/slide-template.html` (dark background #0d1117,
-  font: system-ui / Geist Mono for code, white text).
-- **Slide data contract**: each slide's content is injected via `window.__SLIDE_DATA__`
-  before render. JSON shape per slide:
-  ```json
-  { "title": "string", "body": "string", "code": "string|null", "image_url": "string|null", "slide_num": 1 }
-  ```
-  The renderer script sets `window.__SLIDE_DATA__` and calls `puppeteer.evaluate()` to
-  inject before screenshot. All 10 slides are generated in one Puppeteer session
-  (loop over slide data array).
+- **Tool**: Manual (Canva or equivalent). Export each slide as 1080x1080px PNG.
 - **Resolution**: 1080x1080px (Instagram carousel requirement).
-- **Puppeteer in CI**: requires `actions/setup-node@v4` + chrome install step.
-  Cache restore must come *before* the install to be effective:
-  ```yaml
-  - uses: actions/cache@v4
-    with:
-      path: ~/.cache/puppeteer
-      key: puppeteer-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-      restore-keys: puppeteer-${{ runner.os }}-
-  - run: npx puppeteer browsers install chrome
-    env:
-      PUPPETEER_CACHE_DIR: ~/.cache/puppeteer
-  ```
 - **Source diagrams**: cited from Wikimedia Commons, distill.pub, Papers With Code.
   No AI-generated images. Image URL stored in frontmatter `image_source` field.
 - Word count guidelines (150-250 words per section) are **soft guidelines for manual
@@ -266,26 +234,20 @@ Actions only picks entries with `status: ready`. Selection rule: lowest list ind
 
 ### Local Workflow (Claude/MCP)
 
-#### Step 1: Capture source image (browser screenshot — bypasses hotlink protection)
+#### Step 1: Capture source image (manual)
 
-curl fails against most ML image sources (Wikipedia, distill.pub, Papers With Code)
-due to hotlink protection. Use the gstack browse binary to screenshot instead:
+Find the architecture diagram for the concept from a reliable source (Wikimedia Commons,
+distill.pub, Papers With Code, author blog). Screenshot or download the image manually
+and save it to `assets/{slug}.png`. Update the frontmatter fields:
 
-```bash
-B=~/.claude/skills/gstack/browse/dist/browse  # or repo-local equivalent
-
-# Navigate to source page and screenshot a specific element
-$B goto "https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)"
-$B screenshot assets/$SLUG.png --selector ".thumb img"
-
-# Or full-page screenshot, then crop manually
-$B screenshot /tmp/$SLUG-full.png
+```
+image_source: "{Source Name} — {URL}"
+image_path: "assets/{slug}.png"
 ```
 
-For distill.pub articles, Papers With Code diagrams, or any protected source —
-same pattern. The browse binary renders the page in a real browser; no hotlinks apply.
-
-Store the captured image in `assets/{slug}.png`. Record the source URL in frontmatter.
+Prefer SVG or high-resolution PNG originals where available (Wikimedia Commons images
+can be downloaded directly from the file page). Crop to just the diagram — no surrounding
+page chrome.
 
 #### Step 2: Generate concept draft
 
@@ -335,8 +297,8 @@ git push
 
 1. **Instagram Graph API auth**: requires Facebook Business account + app review.
    How long will setup take? May need to start with manual posting and automate later.
-2. **Image pipeline**: Puppeteer chosen. Canva API is paid (skip). md-to-image has
-   less CSS control and no active maintenance. Puppeteer is the call.
+2. **Carousel rendering**: manual (Canva) for now. Automate in a future phase once
+   slide design is stable.
 3. **Topic queue curation**: who decides what goes in the queue? Fully manual
    (you add topics) or Claude suggests based on interview frequency data?
 4. **Rate of publish**: daily is ambitious for quality. Weekly might be more sustainable
@@ -385,17 +347,15 @@ The template is the product. Don't build the pipeline until the template works.
 
 These remain as build-phase implementation details (not design decisions):
 
-1. `slide-template.html` is not yet created. First build session deliverable —
-   must exist before the Puppeteer carousel step can run.
-2. README update script is unspecified — a small Python/Node script using the
-   `<!-- CONCEPTS_TABLE_END -->` sentinel. Assign during setup.
-3. Reels (15-30s video) deferred to Phase 3. No implementation path in Phase 1.
+1. README update script is unspecified — a small Python script using the
+   `<!-- CONCEPTS_TABLE_START/END -->` sentinels. Assign during setup.
+2. Reels (15-30s video) deferred to Phase 3. No implementation path in Phase 1.
 
 Resolved from prior rounds:
-- ~~md-to-image reference in Distribution Plan~~ — fixed, Puppeteer only.
-- ~~Puppeteer cache/install ordering~~ — fixed, cache restore now comes first.
+- ~~md-to-image reference in Distribution Plan~~ — removed.
+- ~~Puppeteer cache/install ordering~~ — moot; carousel rendering is now manual.
 - ~~sed no-op in local workflow~~ — replaced with Python re.sub one-liners.
-- ~~Image download via curl blocked~~ — replaced with gstack browse binary screenshot.
+- ~~Image download via curl blocked~~ — moot; images are captured manually.
 
 ## What I noticed about how you think
 

@@ -1,6 +1,6 @@
 ---
 title: "Attention"
-tags: [Fundamentals, Architectures, Interviews]
+tags: [Fundamentals, Architectures]
 difficulty: intermediate
 date: 2026-04-06
 image_source: "Jay Alammar — http://jalammar.github.io/illustrated-transformer/"
