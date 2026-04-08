@@ -1,8 +1,3 @@
----
-title: "Attention"
-tags: [Fundamentals, Architectures]
----
-
 # Attention
 
 > [!TIP]
@@ -15,7 +10,7 @@ Attention solves this bottleneck by giving the model access to *all* the past st
 
 <div style="display: flex; justify-content: center; text-align: center;">
   <figure style="margin: 10px;">
-    <img src="../assets/attention-1.png" alt="Image 1" style="height: 240px;">
+    <img src="../assets/attention_1.png" alt="Image 1" style="height: 240px;">
     <figcaption><em>Source: <a href="https://youtu.be/ySEx_Bqxvvo?si=bk2pHfvfDZo8LPRB">MIT 6.S191 (2023): Recurrent Neural Networks, Transformers, and Attention</a></em></figcaption>
   </figure>
 </div>
@@ -29,14 +24,16 @@ In self-attention, every input token generates its own Q, K, and V vectors via l
 3. **Aggregate:** Each word's Value vector is multiplied by its Softmax weight. We sum these up to create the final contextualized representation for word $A$.
 
 **Mathematical Formula:**
-$$ \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V $$
+$$
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+$$
 
 <div style="display: flex; justify-content: center; text-align: center;">
   <figure style="margin: 10px;">
-    <img src="../assets/attention-2.png" alt="Image 1" style="height: 240px;">
+    <img src="../assets/attention_2.png" alt="Image 1" style="height: 240px;">
   </figure>
   <figure style="margin: 10px;">
-    <img src="../assets/attention-3.png" alt="Image 2" style="height: 240px;">
+    <img src="../assets/attention_3.png" alt="Image 2" style="height: 240px;">
   </figure>
 </div>
 <div align="center">
