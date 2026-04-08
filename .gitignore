@@ -4,3 +4,5 @@ scripts/__pycache__/
 *.pyc
 .gstack/
 assets/backprop-full.png
+.claude/
+CLAUDE.md
