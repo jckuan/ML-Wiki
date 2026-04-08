@@ -1,0 +1,67 @@
+# ML-Wiki Topic Queue
+# Status lifecycle: queued → draft → ready → published
+# Selection rule: first entry with status: ready (FIFO by readiness)
+# Slug convention: title.lower().replace(' ', '-')
+
+queue:
+  # --- Published ---
+  - slug: attention
+    title: "Attention"
+    tags: [Fundamentals, Architectures, Interviews]
+    difficulty: intermediate
+    status: published
+
+  - slug: backpropagation
+    title: "Backpropagation"
+    tags: [Fundamentals, Interviews]
+    difficulty: beginner
+    status: published
+
+  - slug: transformer
+    title: "Transformer"
+    tags: [Architectures, Interviews]
+    difficulty: advanced
+    status: published
+
+  # --- Queued (upcoming) ---
+  - slug: batch-normalization
+    title: "Batch Normalization"
+    tags: [Fundamentals, Interviews]
+    difficulty: beginner
+    status: queued
+
+  - slug: dropout
+    title: "Dropout"
+    tags: [Fundamentals, Interviews]
+    difficulty: beginner
+    status: queued
+
+  - slug: convolutional-neural-network
+    title: "Convolutional Neural Network"
+    tags: [Architectures, Interviews]
+    difficulty: intermediate
+    status: queued
+
+  - slug: recurrent-neural-network
+    title: "Recurrent Neural Network"
+    tags: [Architectures, Interviews]
+    difficulty: intermediate
+    status: queued
+
+  - slug: cross-entropy-loss
+    title: "Cross-Entropy Loss"
+    tags: [Fundamentals, Interviews]
+    difficulty: beginner
+    status: queued
+
+  - slug: gradient-descent
+    title: "Gradient Descent"
+    tags: [Fundamentals, Interviews]
+    difficulty: beginner
+    status: queued
+
+  - slug: word2vec
+    title: "Word2Vec"
+    tags: [Architectures, Latest Developments]
+    difficulty: intermediate
+    status: queued
