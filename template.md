@@ -5,14 +5,23 @@
 
 ## The Core Idea
 
-{150-250 words. Lead with intuition. Reference the diagram/formula above. Let the visual do the heavy lifting — your words should explain what the reader is seeing, not repeat it.}
+{150-250 words. Lead with intuition — what problem does this solve, and why does it matter? Let the visual do the heavy lifting; your words should explain what the reader is seeing, not repeat it.}
 
-![{Descriptive alt text}](../assets/{slug}.png)
-*Source: [{Source Name}]({URL})*
+<p align="center">
+  <img src="../assets/{slug}.png" alt="{Descriptive alt text}" style="height: 240px;">
+  <br>
+  <em>Source: <a href="{URL}">{Source Name}</a></em>
+</p>
 
 ## How It Works
 
-{150-250 words. The mechanism. Introduce math with LaTeX inline ($formula$) or block ($$\nformula\n$$) where it clarifies. Code snippet only if math/diagram is insufficient to explain the mechanism.}
+{150-250 words. The mechanism. Numbered steps work well here. Introduce math inline ($formula$) or as a block:}
+
+$$
+{formula}
+$$
+
+{Code snippet only if math/diagram is insufficient to explain the mechanism.}
 
 ## Interview Angle
 
@@ -21,3 +30,5 @@
 **What trips people up:** {The common misconceptions or gaps candidates show.}
 
 **A great answer:** {What distinguishes a strong candidate's response.}
+
+---
