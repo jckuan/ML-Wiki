@@ -26,5 +26,3 @@ Transformers are the backbone of modern AI, so standard questions are practicall
 **What trips people up:** Forgetting the LayerNorm or residual connections when describing the architecture block. Another trap is failing to explain the difference between the encoder (bidirectional context) and decoder (autoregressive, masked context).
 
 **A great answer:** An exceptional candidate will discuss the time complexity tradeoff. While recurrent models process in $\mathcal{O}(N)$ sequence steps, self-attention has a computational complexity of $\mathcal{O}(N^2)$ with respect to sequence length. The candidate will explain how this quadratic cost becomes the new bottleneck, smoothly segueing into newer optimizations like FlashAttention or Mixture of Experts (MoE).
-
----

@@ -43,5 +43,3 @@ Attention is heavily probed in ML interviews.
 **What trips people up:** Candidates often confuse classic Bahdanau/Luong attention (used with RNNs) and self-attention (used in Transformers). Another pitfall is the computational complexity.
 
 **A great answer:** A standout candidate will mention that self-attention has a time and space complexity of $\mathcal{O}(N^2)$ where $N$ is the sequence length, making it expensive for very long sequences, and might briefly reference modern solutions like FlashAttention or linear attention approximations.
-
----

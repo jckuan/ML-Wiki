@@ -46,5 +46,3 @@ Backpropagation is practically guaranteed to come up in introductory ML intervie
 **What trips people up:** The difference between backpropagation and gradient descent. Backpropagation *only* computes the gradients (the direction to move); it's gradient descent (or Adam, SGD, etc.) that actually updates the weights. Another common pitfall is misunderstanding the vanishing/exploding gradient problem.
 
 **A great answer:** An excellent candidate can intuitively explain the chain rule component, relate it to computation graphs, and smoothly transition into how different activation functions (like ReLU vs. Sigmoid) affect the gradients during the backward pass.
-
----
