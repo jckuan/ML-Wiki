@@ -1,28 +1,48 @@
 # Transformer
 
 > [!TIP]
-> The Transformer is a neural network architecture that processes sequential data all at once rather than word-by-word, relying entirely on "attention" to understand the relationships between all parts of the data simultaneously.
+> The Transformer replaces recurrent sequence processing with self-attention over the entire sequence at once, enabling full parallelism and direct modeling of long-range dependencies.
 
 ## The Core Idea
-Historically, sequence tasks (like translation) relied on Recurrent Neural Networks (RNNs) and LSTMs. These models processed sentences token by token, from left to right. This sequential nature created an inescapable bottleneck: they were terribly slow to train (as they couldn't be efficiently parallelized) and struggled to remember context from the beginning of long paragraphs.
 
-The Transformer, introduced by Google researchers in the landmark 2017 paper *"Attention Is All You Need,"* discarded recurrence entirely. Instead, it relies on a "self-attention" mechanism that looks at an entire sequence at once, computing how strongly every word relates to every other word. Because it processes all tokens simultaneously, it massively reduced training times and enabled unprecedented scaling on modern hardware (GPUs/TPUs). This parallelizable nature paved the way for the explosive growth of modern Large Language Models (LLMs) such as GPT, BERT, and Llama.
+Before the Transformer, sequence models like RNNs and LSTMs processed tokens one by one, left to right. This sequential constraint had two fundamental costs: training couldn't be parallelized across time steps, and long-range dependencies had to survive many intermediate steps — making them fragile for long sequences.
+
+Vaswani et al. (2017) in *"Attention Is All You Need"* discarded recurrence entirely. Their insight: if self-attention lets every token attend directly to every other token simultaneously, you get two things for free. First, full parallelism — all positions are computed in one matrix multiply, not N sequential steps. Second, constant-distance dependency modeling — "bank" can directly attend to "river" regardless of how many tokens separate them, with no gradient path through intermediate states.
+
+This architectural shift had compounding consequences. Training speeds increased enough to scale models to billions of parameters, which in turn unlocked emergent capabilities that smaller sequential models never exhibited. Every major modern LLM (GPT, BERT, LLaMA) is a Transformer.
 
 ## How It Works
-The original Transformer is composed of an **Encoder** stack and a **Decoder** stack. These stacks are made up of layers containing two primary sub-components: **Multi-Head Self-Attention** and **Position-wise Feed-Forward Networks**.
 
-1. **Positional Encoding:** Because it processes everything in parallel, the architecture natively has no concept of order. It injects mathematically crafted "positional encodings" (often combinations of sines and cosines) into the input embeddings so the network knows the position of each word.
-2. **Multi-Head Self-Attention:** Instead of computing a single attention distribution, the model runs multiple self-attention operations in parallel ("heads"). This allows the model to extract complex, multi-faceted relationships (e.g., one head might track pronouns, another might track grammar).
-3. **Feed-Forward & Normalization:** The attended representations pass through a two-layer feed-forward network. Crucially, residual (skip) connections and Layer Normalization are applied around every sub-layer to stabilize the gradients during deep training.
-4. **The Decoder:** The decoder includes an extra "Cross-Attention" layer to look at the encoder's output. It also explicitly uses *Masked* Self-Attention so it cannot "cheat" by looking at future words during text generation.
+The original Transformer stacks $N=6$ encoder layers and $N=6$ decoder layers. Each layer wraps its sub-layers with residual connections and Layer Normalization:
 
-![The Transformer Model Architecture](../assets/transformer.png)
+$$
+\text{output} = \text{LayerNorm}(x + \text{Sublayer}(x))
+$$
+
+<p align="center">
+  <img src="../assets/transformer_1.png" style="height: 360px;">
+</p>
+
+**Encoder** (each of N layers):
+1. **Multi-Head Self-Attention** — every token attends to every other token bidirectionally.
+2. **Position-wise Feed-Forward Network** — a two-layer MLP applied independently to each position.
+
+**Decoder** (each of N layers) adds a third sub-layer between the two above:
+- **Masked Self-Attention** — tokens can only attend to earlier positions (masking prevents looking ahead during autoregressive generation).
+- **Cross-Attention** — queries come from the decoder, keys and values come from the encoder output.
+
+**Positional Encoding** — because self-attention is permutation-invariant, the model has no inherent sense of order. Sinusoidal encodings are added to the input embeddings before the first layer.
+
+<p align="center">
+  <img src="../assets/transformer_2.png" style="height: 360px;">
+  <br>
+  <em>Source: <a href="https://arxiv.org/abs/1706.03762">Vaswani et al., "Attention Is All You Need" (2017)</a></em>
+</p>
 
 ## Interview Angle
-Transformers are the backbone of modern AI, so standard questions are practically mandatory for NLP engineering roles.
 
-**What gets asked:** "Why are Transformers faster to train than LSTMs?" (Answer: Parallelization). "How does the model know word order?" (Answer: Positional Encodings).
+**What gets asked:** "Walk me through the encoder vs. decoder" (bidirectional vs. masked + cross-attention). "Why do we need positional encodings?" (self-attention is permutation-invariant — without them, "cat sat on mat" and "mat on sat cat" are identical inputs). "What's the complexity of self-attention?" ($\mathcal{O}(N^2 \cdot d)$ in time and $\mathcal{O}(N^2)$ in memory).
 
-**What trips people up:** Forgetting the LayerNorm or residual connections when describing the architecture block. Another trap is failing to explain the difference between the encoder (bidirectional context) and decoder (autoregressive, masked context).
+**What trips people up:** Conflating self-attention with cross-attention, or forgetting the masking in the decoder entirely. Another common gap: not knowing that encoder-only models (BERT) and decoder-only models (GPT) are both Transformers — the encoder-decoder structure is just one variant.
 
 **A great answer:** An exceptional candidate will discuss the time complexity tradeoff. While recurrent models process in $\mathcal{O}(N)$ sequence steps, self-attention has a computational complexity of $\mathcal{O}(N^2)$ with respect to sequence length. The candidate will explain how this quadratic cost becomes the new bottleneck, smoothly segueing into newer optimizations like FlashAttention or Mixture of Experts (MoE).
