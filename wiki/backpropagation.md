@@ -1,48 +1,64 @@
 # Backpropagation
 
 > [!TIP]
-> Backpropagation is a "blame-assignment" algorithm that calculates exactly how much each weight and bias in a neural network contributed to an error, allowing the network to learn from its mistakes.
+> Backpropagation applies the chain rule in reverse through a computation graph, computing the gradient of the loss with respect to every weight in a single backward pass — instead of one forward pass per weight.
 
 ## The Core Idea
-When training a neural network, the process is essentially an optimization problem where we want to find the best configuration of parameters to make accurate predictions. After a network makes a prediction (the forward pass), we calculate the error relative to the true answer using a loss function. But how do we know which internal connections to adjust and by how much?
 
-Backpropagation solves this by moving *backward* from the output layer to the input layer. It acts as a signaling mechanism. If the network made a large error, backpropagation sends a strong "signal" backward in proportion to each weight's influence on the final mistake. It meticulously assigns responsibility to every single neuron and connection, computing the sensitivity of the final error to every parameter. This calculation provides the "gradient," telling the optimization algorithm (like Gradient Descent) precisely which direction and how far to adjust the weights to reduce the error on the next try. Without this efficient mechanism, training deep networks would be computationally impossible.
+Training a neural network is an optimization problem: find the weights that minimize a loss $C$. After a forward pass produces a prediction, we know how wrong the network was. The hard part is figuring out how much each of potentially millions of weights contributed to that error — the **credit-assignment problem**.
+
+The brute-force approach nudges each weight by $\epsilon$ and reruns the forward pass to measure the change in loss. For $N$ parameters, that's $N$ forward passes per update: completely intractable.
+
+Backpropagation solves this in a single backward pass. A neural network is a nested composite function, so the chain rule lets us decompose $\partial C / \partial w$ into products of cheap local derivatives. Each local derivative can be computed from activations already cached during the forward pass. The backward pass visits each node exactly once, propagating a gradient signal from the output back to the inputs.
+
+One critical distinction: **backpropagation only computes gradients**. It does not update weights. That job belongs to an optimizer (SGD, Adam, etc.). Conflating the two is the most common interview mistake.
+
+<p align="center">
+  <img src="../assets/backpropagation_1.png" style="height: 240px;">
+  <img src="../assets/backpropagation_2.png" style="height: 240px;">
+  <br>
+  <em>Source: <a href="https://colah.github.io/posts/2015-08-Backprop/">Colah's Blog — Calculus on Computational Graphs: Backpropagation</a></em>
+</p>
 
 ## How It Works
-Mathematically, backpropagation is an elegant application of the **chain rule** from calculus. Because a neural network is essentially a massive composite function—where the output of one layer becomes the input to the next—we can compute the derivative of the total error with respect to any weight deep within the network by multiplying local derivatives together.
 
-At each node (or neuron) during the backward pass, two things happen:
-1. **Receive the "upstream" gradient:** The error signal passed down from the layer above it.
-2. **Compute local gradients:** The partial derivative of the node's output with respect to its inputs and weights.
+**Start with one weight.** Suppose a network has a single chain: input $x$ → weight $w_1$ → hidden $h$ → weight $w_2$ → loss $C$. How does $w_1$ affect $C$? By the chain rule:
 
-The node then multiplies the upstream gradient by its local gradients to calculate the "downstream" gradient to pass further back, and to calculate how its own weights should be updated.
+$$
+\frac{\partial C}{\partial w_1} = \frac{\partial C}{\partial h} \cdot \frac{\partial h}{\partial w_1}
+$$
 
-**Fundamental Equations of Backpropagation (Chain Rule):**
-Given error $C$, layer $l$, activations $a^l$, weighted inputs $z^l$, and weights $w^l$:
-1. Output layer error: $\delta^L = \nabla_a C \odot \sigma'(z^L)$
-2. Hidden layer error: $\delta^l = ((w^{l+1})^T \delta^{l+1}) \odot \sigma'(z^l)$
-3. Rate of change of the cost with respect to any weight: $\frac{\partial C}{\partial w_{jk}^l} = a_k^{l-1} \delta_j^l$
+That's backprop in miniature: multiply the "how much does the loss care about $h$" signal (coming from the right) by the "how much does $w_1$ control $h$" signal (local). Backpropagation scales this to every weight in the network simultaneously.
 
-![Backpropagation of Errors](../assets/backprop.png)
+<p align="center">
+  <img src="../assets/backpropagation_3.png" style="height: 240px;">
+  <br>
+  <em>Source: <a href="https://youtu.be/tIeHLnjs5U8?si=Qsnr7U4syIIXLLRx">3Blue1Brown — Backpropagation calculus | Deep Learning Chapter 4</a></em>
+</p>
 
-```python
-# A simplified conceptual backward pass step for one layer:
-# Compute local gradient of activation function
-d_activation = act_function_derivative(layer_output)
-# Chain rule: multiply error signal by local gradient
-d_layer = error_signal * d_activation
-# Compute gradients for weights and biases
-d_weights = torch.matmul(layer_input.T, d_layer)
-d_biases = torch.sum(d_layer, dim=0)
-# Pass error signal to the previous layer
-error_signal_prev = torch.matmul(d_layer, weights.T)
-```
+**Two passes, four equations.** Let $z^l = w^l a^{l-1} + b^l$ be the pre-activation at layer $l$, and $a^l = \sigma(z^l)$ the output after activation. The key intermediate is the **error signal** $\delta^l \equiv \partial C / \partial z^l$ — how sensitive the loss is to the raw input of each layer.
+
+1. **Seed at the output** *(how wrong were we, scaled by the output activation's slope)*
+$$
+\delta^L = \nabla_a C \odot \sigma'(z^L)
+$$
+
+2. **Pass the signal backward** *(route through transposed weights, gate by the activation slope at this layer)*
+$$
+\delta^l = \left((w^{l+1})^T \delta^{l+1}\right) \odot \sigma'(z^l)
+$$
+
+3. **Read off the gradients** *(once every $\delta^l$ is known, weights and biases are one multiply away)*
+$$
+\frac{\partial C}{\partial w_{jk}^l} = a_k^{l-1} \cdot \delta_j^l \qquad \frac{\partial C}{\partial b_j^l} = \delta_j^l
+$$
+
+The weight gradient (step 3) is "what came in from the layer below" × "the error signal from the layer above." If the neuron below is inactive ($a_k^{l-1} \approx 0$), the weight gets a near-zero gradient no matter the loss — this is the **dead neuron** problem with ReLU.
 
 ## Interview Angle
-Backpropagation is practically guaranteed to come up in introductory ML interviews.
 
-**What gets asked:** "Can you derive backpropagation for a simple fully connected layer or a specific activation function (like ReLU or Sigmoid)?" 
+**What gets asked:** "Walk me through backprop for a single fully-connected layer." You may also be asked how activation function choice (sigmoid vs. ReLU) affects gradient flow, and what the vanishing gradient problem is.
 
-**What trips people up:** The difference between backpropagation and gradient descent. Backpropagation *only* computes the gradients (the direction to move); it's gradient descent (or Adam, SGD, etc.) that actually updates the weights. Another common pitfall is misunderstanding the vanishing/exploding gradient problem.
+**What trips people up:** Saying "backpropagation updates the weights." Backprop computes $\nabla_w C$; the optimizer uses those gradients to update weights. A second error: thinking backprop is neural-network-specific. It's reverse-mode automatic differentiation on any computation graph.
 
-**A great answer:** An excellent candidate can intuitively explain the chain rule component, relate it to computation graphs, and smoothly transition into how different activation functions (like ReLU vs. Sigmoid) affect the gradients during the backward pass.
+**A great answer:** Reverse-mode autodiff costs one pass per *output*; forward-mode costs one pass per *input*. A neural network has $N$ parameters (inputs to the loss) but only one scalar output. So reverse-mode computes the full gradient in one backward pass; forward-mode would need $N$ passes — one per parameter. That factor-of-$N$ difference is why training deep networks is computationally feasible at all.
