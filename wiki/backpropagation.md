@@ -39,16 +39,19 @@ That's backprop in miniature: multiply the "how much does the loss care about $h
 **Two passes, four equations.** Let $z^l = w^l a^{l-1} + b^l$ be the pre-activation at layer $l$, and $a^l = \sigma(z^l)$ the output after activation. The key intermediate is the **error signal** $\delta^l \equiv \partial C / \partial z^l$ — how sensitive the loss is to the raw input of each layer.
 
 1. **Seed at the output** *(how wrong were we, scaled by the output activation's slope)*
+
 $$
 \delta^L = \nabla_a C \odot \sigma'(z^L)
 $$
 
 2. **Pass the signal backward** *(route through transposed weights, gate by the activation slope at this layer)*
+
 $$
 \delta^l = \left((w^{l+1})^T \delta^{l+1}\right) \odot \sigma'(z^l)
 $$
 
 3. **Read off the gradients** *(once every $\delta^l$ is known, weights and biases are one multiply away)*
+
 $$
 \frac{\partial C}{\partial w_{jk}^l} = a_k^{l-1} \cdot \delta_j^l \qquad \frac{\partial C}{\partial b_j^l} = \delta_j^l
 $$
