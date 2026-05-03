@@ -34,7 +34,7 @@ Attention then runs in four steps:
 4. **Aggregate:** Multiply by $V$ for a weighted sum of values — one context vector per query position.
 
 $$
-\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+\text{Attention}(Q, K, V) = \text{softmax}\\left(\frac{QK^T}{\sqrt{d_k}}\right)V
 $$
 
 <p align="center">
